@@ -4,6 +4,9 @@ let board = [];
 let rows = 9;
 let columns = 9;
 let score = 0;
+let timer = document.querySelector('#time');
+let currentTime = 60;
+let gameOver = document.querySelector('#game-over')
 
 let currTile;
 let otherTile;
@@ -20,7 +23,7 @@ window.onload = function () {
 }
 
 function randomCandy() {
-    return candies[Math.floor(Math.random() * candies.length)]; 
+    return candies[Math.floor(Math.random() * candies.length)];
 
 }
 
@@ -28,18 +31,18 @@ function startGame() {
     for (let r = 0; r < rows; r++) {
         let row = []
         for (let c = 0; c < columns; c++) {
-           
+
             let tile = document.createElement("img");
             tile.id = r.toString() + "-" + c.toString();
             tile.src = "./images/" + randomCandy() + ".png";
 
-            
-            tile.addEventListener("dragstart", dragStart); 
+
+            tile.addEventListener("dragstart", dragStart);
             tile.addEventListener("dragover", dragOver);
-            tile.addEventListener("dragenter", dragEnter); 
-            tile.addEventListener("dragleave", dragLeave); 
-            tile.addEventListener("drop", dragDrop); 
-            tile.addEventListener("dragend", dragEnd); 
+            tile.addEventListener("dragenter", dragEnter);
+            tile.addEventListener("dragleave", dragLeave);
+            tile.addEventListener("drop", dragDrop);
+            tile.addEventListener("dragend", dragEnd);
 
             document.getElementById("board").append(tile);
             row.push(tile);
@@ -211,7 +214,6 @@ function crushChoco() {
             let candy3 = board[r][c + 2];
 
             if (candy1.src.includes("Choco") && candy2.src == candy3.src) {
-                console.log('enters rows');
                 candy1.src = "./images/blank.png";
                 candy2.src = "./images/blank.png";
                 candy3.src = "./images/blank.png";
@@ -244,7 +246,6 @@ function crushChoco() {
             let candy3 = board[r + 2][c];
 
             if (candy1.src.includes("Choco") && candy2.src == candy3.src) {
-                console.log('enters columns');
                 candy1.src = "./images/blank.png";
                 candy2.src = "./images/blank.png";
                 candy3.src = "./images/blank.png";
@@ -351,6 +352,35 @@ function generateCandy() { //only the top row needed to generate
     }
 
 }
+
+
+function countDown() {
+    currentTime--;
+    timer.textContent = currentTime;
+
+    if (currentTime === 0) {
+       
+        clearInterval(countDownTimerId);
+        document.getElementById("game-over").style.display = "block";
+
+        function clearEventListeners() {
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < columns; c++) {
+                    let tile = board[r][c];
+                    let newTile = tile.cloneNode(true);
+                    tile.parentNode.replaceChild(newTile, tile);
+                }
+            }
+        }
+
+        clearEventListeners()
+
+    }
+
+}
+
+
+let countDownTimerId = setInterval(countDown, 1000)
 
 
 
